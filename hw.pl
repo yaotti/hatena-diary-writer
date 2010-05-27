@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
 # hw.pl - Hatena Diary Writer.
 #
@@ -261,7 +261,7 @@ sub login() {
     }
 
     my %form;
-    $form{name} = $username;
+    $form{name} = (split /\+/, $username)[0];
     $form{password} = $password;
 
     my $r; # Response.
@@ -330,7 +330,7 @@ sub logout() {
     }
 
     my %form;
-    $form{name} = $username;
+    $form{name} = (split /\+/, $username)[0];
     $form{password} = $password;
 
     print_message("Logout from $hatena_url as $form{name}.");
@@ -695,7 +695,7 @@ sub load_config() {
             # skip comment.
         } elsif (/^$/) {
             # skip blank line.
-        } elsif (/^id:([^:]+)$/) {
+        } elsif (/^id:([^:+]+)$/) {
             $username = $1;
             print_debug("load_config: id:$username");
         } elsif (/^g:([^:]+)$/) {
