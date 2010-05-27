@@ -65,6 +65,10 @@ my $filter_command = '';
 # Proxy setting.
 my $http_proxy = '';
 
+# Notification prefix to Twitter.
+my $twitter_notification_prefix = '';
+
+
 # Directory for "YYYY-MM-DD.txt".
 my $txt_dir = ".";
 
@@ -111,10 +115,11 @@ my %cmd_opt = (
     'M' => 0,   # "no timestamp" flag.
     'n' => "",  # "config file" option.
     'S' => 1,   # "SSL" option. This is always 1. Set 0 to login older hatena server.
+    'w' => "",   # Twitter notification prefix
 );
 
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
-getopts("tdu:p:a:T:cg:f:Mn:", \%cmd_opt) or error_exit("Unknown option.");
+getopts("tdu:p:a:T:cg:f:Mn:w:", \%cmd_opt) or error_exit("Unknown option.");
 
 if ($cmd_opt{d}) {
     print_debug("Debug flag on.");
@@ -132,6 +137,8 @@ load_config() if -e($config_file);
 # Override global vars with command-line options.
 $username = $cmd_opt{u} if $cmd_opt{u};
 $password = $cmd_opt{p} if $cmd_opt{p};
+$twitter_notification_prefix = $cmd_opt{w} if defined $cmd_opt{w};
+warn 'twitter prefix: ' . $twitter_notification_prefix;
 $groupname = $cmd_opt{g} if $cmd_opt{g};
 $ua_option{agent} = $cmd_opt{a} if $cmd_opt{a};
 $ua_option{timeout} = $cmd_opt{T} if $cmd_opt{T};
@@ -439,7 +446,6 @@ sub create_it($$$) {
     print_debug("create_it: $year-$month-$day.");
 
     $user_agent->cookie_jar($cookie_jar);
-
     my $r = $user_agent->simple_request(
         HTTP::Request::Common::POST("$hatena_url/$username/edit",
             Content_Type => 'form-data',
@@ -500,6 +506,8 @@ sub post_it($$$$$$) {
                 title => $title,
                 trivial => $cmd_opt{t},
                 rkm => $rkm,
+                twitter_notification_enabled => defined $twitter_notification_prefix,
+                twitter_notification_prefix => $twitter_notification_prefix,
 
                 # Important:
                 # This entry must already exist.
