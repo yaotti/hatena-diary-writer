@@ -493,7 +493,11 @@ sub post_it($$$$$$) {
     print_debug("post_it: $year-$month-$day.");
 
     $user_agent->cookie_jar($cookie_jar);
-
+    # XXX: twitter prefix must be EUC-JP...
+    if ($enable_encode && $twitter_notification_prefix) {
+        $client_encoding ||= 'UTF-8';
+        Encode::from_to($twitter_notification_prefix, $client_encoding, 'EUC-JP');
+    }
     my $r = $user_agent->simple_request(
         HTTP::Request::Common::POST("$hatena_url/$username/edit",
             Content_Type => 'form-data',
