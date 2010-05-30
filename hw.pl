@@ -497,6 +497,11 @@ sub post_it($$$$$$) {
     if ($enable_encode && $twitter_notification_prefix) {
         Encode::from_to($twitter_notification_prefix, 'UTF-8', 'EUC-JP');
     }
+
+    if (defined $twitter_notification_prefix) {
+        $twitter_notification_prefix =~ s/'/\'/;
+        $twitter_notification_prefix = sprintf "'%s'", $twitter_notification_prefix;
+    }
     my $r = $user_agent->simple_request(
         HTTP::Request::Common::POST("$hatena_url/$username/edit",
             Content_Type => 'form-data',
