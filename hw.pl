@@ -66,7 +66,7 @@ my $filter_command = '';
 my $http_proxy = '';
 
 # Notification prefix to Twitter.
-my $twitter_notification_prefix = '';
+my $twitter_notification_prefix = undef;
 
 
 # Directory for "YYYY-MM-DD.txt".
@@ -115,7 +115,7 @@ my %cmd_opt = (
     'M' => 0,   # "no timestamp" flag.
     'n' => "",  # "config file" option.
     'S' => 1,   # "SSL" option. This is always 1. Set 0 to login older hatena server.
-    'w' => "",   # Twitter notification prefix
+    'w' => undef,   # Twitter notification prefix
 );
 
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
@@ -138,7 +138,7 @@ load_config() if -e($config_file);
 $username = $cmd_opt{u} if $cmd_opt{u};
 $password = $cmd_opt{p} if $cmd_opt{p};
 $twitter_notification_prefix = $cmd_opt{w} if defined $cmd_opt{w};
-warn 'twitter prefix: ' . $twitter_notification_prefix;
+#warn 'twitter prefix: ' . $twitter_notification_prefix if defined $twitter_notification_prefix;
 $groupname = $cmd_opt{g} if $cmd_opt{g};
 $ua_option{agent} = $cmd_opt{a} if $cmd_opt{a};
 $ua_option{timeout} = $cmd_opt{T} if $cmd_opt{T};
